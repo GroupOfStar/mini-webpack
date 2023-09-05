@@ -1,0 +1,28 @@
+(function (modules) {
+    function require(id) {
+        const [fn, mapping] = modules[id]
+
+        const module = {
+            exports: {}
+        }
+
+        function localRequire(filePath) {
+            const id = mapping[filePath]
+            return require(id)
+        }
+
+        fn(localRequire, module, module.exports)
+
+        return module.exports
+    }
+
+    require(0)
+})(
+    {
+        <% for( let index = 0; index < data.length; index++ ) { %>
+            <%- data[index]['id'] %>: [function (require, module, exports) {
+                <%- data[index]['code'] %>
+            }, <%- JSON.stringify(data[index]["mapping"]) %>],
+        <% } %>
+    }
+)

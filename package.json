@@ -1,0 +1,24 @@
+{
+  "name": "mini-webpack",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.22.15",
+    "@babel/parser": "^7.22.15",
+    "babel-preset-env": "^1.7.0",
+    "ejs": "^3.1.9"
+  },
+  "dependencies": {
+    "@babel/traverse": "^7.22.15"
+  },
+  "directories": {
+    "example": "example"
+  },
+  "description": "迷你webpack打包器"
+}
