@@ -4,12 +4,41 @@ import parser from '@babel/parser';
 import traverse from "@babel/traverse";
 import { transformFromAst } from "@babel/core"
 import ejs from 'ejs';
+import { jsonLoader } from './jsonLoader.js';
 
 let id = 0
 
+const webpackConfig = {
+    module: {
+        rules: [
+            {
+                test: /\.json$/,
+                use: [jsonLoader],
+            },
+        ],
+    },
+};
+
+const loaderContext = {
+    addDependency(dep) {
+        console.log('dep :>> ', dep);
+    }
+}
+
 function createAsset(filePath) {
     // 1. 获取文件内容
-    const source = fs.readFileSync(filePath, { encoding: "utf-8" })
+    let source = fs.readFileSync(filePath, { encoding: "utf-8" })
+
+    // 1.1 加载loader
+    webpackConfig.module.rules.forEach(({ test, use }) => {
+        if (test.test(filePath)) {
+            if (Array.isArray(use)) {
+                use.reverse().forEach(fn => {
+                    source = fn.call(loaderContext, source)
+                })
+            }
+        }
+    })
 
     // 2. 转化为ast抽象语法树
     const ast = parser.parse(source, { sourceType: "module" })
