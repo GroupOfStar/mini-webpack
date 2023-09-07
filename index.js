@@ -5,6 +5,8 @@ import traverse from "@babel/traverse";
 import { transformFromAst } from "@babel/core"
 import ejs from 'ejs';
 import { jsonLoader } from './jsonLoader.js';
+import { ChangeOutputPath } from './ChangeOutputPath.js';
+import { SyncHook } from 'tapable';
 
 let id = 0
 
@@ -17,8 +19,18 @@ const webpackConfig = {
             },
         ],
     },
+    plugins: [new ChangeOutputPath()]
 };
 
+const hooks = {
+    emitPath: new SyncHook(['context'])
+}
+
+function initPlugins() {
+    webpackConfig.plugins.forEach(item => {
+        item.apply(hooks)
+    })
+}
 const loaderContext = {
     addDependency(dep) {
         console.log('dep :>> ', dep);
@@ -69,6 +81,8 @@ function createGraph(baseUrl) {
     return queue
 }
 
+initPlugins()
+
 const graph = createGraph("./example")
 
 function build(graph) {
@@ -78,7 +92,16 @@ function build(graph) {
         return { id, code, mapping }
     })
     const code = ejs.render(template, { data })
-    fs.writeFileSync('./dist/bundle.js', code)
+
+    let outputPath = './dist/bundle.js'
+
+    const context = {
+        changeOutputPath(path) {
+            outputPath = path
+        }
+    }
+    hooks.emitPath.call(context)
+    fs.writeFileSync(outputPath, code)
 }
 
 build(graph)

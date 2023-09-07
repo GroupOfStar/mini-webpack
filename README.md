@@ -22,4 +22,8 @@
 
 ## 三期实现plugin
 
-todo
+插件的原理是基于事件(钩子)去实现的，webpack在不同阶段会有不同的钩子，插件开发者“监听”这些钩子，拿到webpack暴露出来的对象后通过操作对象上的一些方法来去改变webpack的打包行为。
+
+- tapable包，为插件创建钩子的用法，见tabable.js
+- 按照webpack的插件规范模拟一个ChangeOutputPath插件
+- 如何定义、注册、调用插件
