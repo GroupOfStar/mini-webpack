@@ -1,7 +1,7 @@
 import { SyncHook, AsyncParallelHook } from 'tapable';
 
 class List {
-    getRoutes() {}
+    getRoutes() { }
 }
 
 class Car {
@@ -43,18 +43,20 @@ car.hooks.accelerate.tap("test 1", (...args) => {
     console.log('accelerate 1 :', args);
 })
 car.hooks.accelerate.tap("test 2", (...args) => {
-    console.log('accelerate 2 ', args.join(','));
+    console.log('accelerate 2 :', args.join(','));
 })
 
 // 2. 触发
-car.setSpeed('cs 01', "args2", "args3")
+car.setSpeed('cs01', "args2", "args3")
 
 // 1. 注册
 car.hooks.calculateRoutes.tapPromise("calculateRoutes 1", (source, target) => {
     return new Promise((resolve, reject) => {
-        console.log('----source, target :>> ', source, target);
-        resolve()
+        setTimeout(() => {
+            console.log('----source, target :>> ', source, target);
+            resolve()
+        }, 1000)
     })
 })
 // 2. 触发
-car.useNavigationSystemPromise([1,2, 3], '3')
+car.useNavigationSystemPromise([1, 2, 3], '3')
